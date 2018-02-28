@@ -45,6 +45,14 @@ func (RequesterMock) Send(s SenderOptions) ([]byte, error) {
 		return json.Marshal(blockHeightMock)
 	case "/time-sync/network-time":
 		return json.Marshal(communicationTimeStampMock)
+	case "/heartbeat":
+		return json.Marshal(nemRequestResultMock)
+	case "/namespace/root/page":
+		return json.Marshal(namespaceMetaDataPairMock)
+	case "/namespace/mosaic/definition/page":
+		return json.Marshal(mosaicDefinitionMock)
+	case "/namespace":
+		return json.Marshal(namespaceDataMock)
 	default:
 		return []byte{}, nil
 	}
