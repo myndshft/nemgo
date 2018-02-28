@@ -39,6 +39,12 @@ func (RequesterMock) Send(s SenderOptions) ([]byte, error) {
 		return json.Marshal(mosaicDefinitionArrayMock)
 	case "/account/historical/get":
 		return json.Marshal(historicalAccountDataArrayMock)
+	case "/chain/last-block", "/block/at/public":
+		return json.Marshal(blockMock)
+	case "/chain/height":
+		return json.Marshal(blockHeightMock)
+	case "/time-sync/network-time":
+		return json.Marshal(communicationTimeStampMock)
 	default:
 		return []byte{}, nil
 	}
