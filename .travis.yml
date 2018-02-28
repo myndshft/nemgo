@@ -1,0 +1,22 @@
+language: go
+
+sudo: required
+
+go:
+  - 1.5.x
+  - 1.6.x
+  - 1.7.x
+  - 1.8.x
+  - 1.9.x
+  - 1.10.x
+  - tip
+
+install:
+  - dep install
+
+script:
+  - go test ./...
+
+matrix:
+  allow_failures:
+    - go: tip
