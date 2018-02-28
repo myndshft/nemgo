@@ -74,10 +74,11 @@ type AccountMetaDataPair struct {
 	Meta AccountMetaData
 }
 
+type accountMetaDataPairRecords struct {
+	Records []AccountMetaDataPair `json:"data"`
+}
+
 func (amdp *AccountMetaDataPair) unmarshal(data []byte) ([]AccountMetaDataPair, error) {
-	type accountMetaDataPairRecords struct {
-		Records []AccountMetaDataPair `json:"data"`
-	}
 	var tmpData accountMetaDataPairRecords
 	err := json.Unmarshal(data, &tmpData)
 	if err != nil {
@@ -203,10 +204,11 @@ type HarvestInfo struct {
 	Height int `json:"height"`
 }
 
+type harvestInfoRecords struct {
+	Records []HarvestInfo `json:"data"`
+}
+
 func (hi *HarvestInfo) unmarshal(data []byte) ([]HarvestInfo, error) {
-	type harvestInfoRecords struct {
-		Records []HarvestInfo `json:"data"`
-	}
 	var tmpData harvestInfoRecords
 	err := json.Unmarshal(data, &tmpData)
 	if err != nil {
@@ -364,10 +366,11 @@ type TransactionMetaDataPair struct {
 	Transaction Transaction `json:"transaction"`
 }
 
+type transactionMetaDataPairRecords struct {
+	Records []TransactionMetaDataPair `json:"data"`
+}
+
 func (tmdp *TransactionMetaDataPair) unmarshal(data []byte) ([]TransactionMetaDataPair, error) {
-	type transactionMetaDataPairRecords struct {
-		Records []TransactionMetaDataPair `json:"data"`
-	}
 	var tmpData transactionMetaDataPairRecords
 	err := json.Unmarshal(data, &tmpData)
 	if err != nil {
@@ -504,10 +507,11 @@ type UnconfirmedTransactionMetaDataPair struct {
 	Transaction Transaction `json:"transaction"`
 }
 
+type unconfirmedTransactionMetaDataPairRecords struct {
+	Records []UnconfirmedTransactionMetaDataPair `json:"data"`
+}
+
 func (utmdp *UnconfirmedTransactionMetaDataPair) unmarshal(data []byte) ([]UnconfirmedTransactionMetaDataPair, error) {
-	type unconfirmedTransactionMetaDataPairRecords struct {
-		Records []UnconfirmedTransactionMetaDataPair `json:"data"`
-	}
 	var tmpData unconfirmedTransactionMetaDataPairRecords
 	err := json.Unmarshal(data, &tmpData)
 	if err != nil {
@@ -599,10 +603,11 @@ type NamespaceMetaDataPair struct {
 	Namespace NamespaceData `json:"namespace"`
 }
 
+type namespaceMetaDataPairRecords struct {
+	Records []NamespaceMetaDataPair `json:"data"`
+}
+
 func (nmdp *NamespaceMetaDataPair) unmarshal(data []byte) ([]NamespaceMetaDataPair, error) {
-	type namespaceMetaDataPairRecords struct {
-		Records []NamespaceMetaDataPair `json:"data"`
-	}
 	var tmpData namespaceMetaDataPairRecords
 	err := json.Unmarshal(data, &tmpData)
 	if err != nil {
@@ -652,10 +657,11 @@ type Mosaic struct {
 	Quantity int `json:"quantity"`
 }
 
+type mosaicRecords struct {
+	Records []Mosaic `json:"data"`
+}
+
 func (m *Mosaic) unmarshal(data []byte) ([]Mosaic, error) {
-	type mosaicRecords struct {
-		Records []Mosaic `json:"data"`
-	}
 	var tmpData mosaicRecords
 	err := json.Unmarshal(data, &tmpData)
 	if err != nil {
@@ -753,10 +759,11 @@ type MosaicDefinition struct {
 	Levy MosaicDefinitionLevy `json:"levy"`
 }
 
+type mosaicDefinitionRecords struct {
+	Records []MosaicDefinition `json:"data"`
+}
+
 func (md *MosaicDefinition) unmarshal(data []byte) ([]MosaicDefinition, error) {
-	type mosaicDefinitionRecords struct {
-		Records []MosaicDefinition `json:"data"`
-	}
 	var tmpData mosaicDefinitionRecords
 	err := json.Unmarshal(data, &tmpData)
 	if err != nil {
@@ -791,7 +798,7 @@ func AccountMosaicDefinitions(sender Sender, u url.URL, address string) ([]Mosai
 
 // MosaicDefinitionsCreated gets mosaic definitions that an account has created
 func MosaicDefinitionsCreated(sender Sender, u url.URL, address string, parent string) ([]MosaicDefinition, error) {
-	u.Path = "account/mosaic/definition/page"
+	u.Path = "/account/mosaic/definition/page"
 	q := u.Query()
 	q.Set("address", address)
 	q.Set("parent", parent)
@@ -835,10 +842,11 @@ type HistoricalAccountData struct {
 	Height int `json:"height"`
 }
 
+type historicalAccountDataRecords struct {
+	Records []HistoricalAccountData `json:"data"`
+}
+
 func (had *HistoricalAccountData) unmarshal(data []byte) ([]HistoricalAccountData, error) {
-	type historicalAccountDataRecords struct {
-		Records []HistoricalAccountData `json:"data"`
-	}
 	var tmpData historicalAccountDataRecords
 	err := json.Unmarshal(data, &tmpData)
 	if err != nil {
@@ -865,7 +873,6 @@ func GetHistoricalAccountData(sender Sender, u url.URL, address string, block in
 	if err != nil {
 		return []HistoricalAccountData{}, err
 	}
-	fmt.Println(string(resp))
 	var amdp HistoricalAccountData
 	data, err := amdp.unmarshal(resp)
 	if err != nil {
@@ -908,7 +915,7 @@ func GetBatchHistoricalAccountData(sender Sender, u url.URL, addresses []string,
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(string(resp))
+	fmt.Println(resp)
 }
 
 // StartHarvesting unlocks an account
