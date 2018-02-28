@@ -37,9 +37,48 @@ type Options struct {
 	Body []byte
 }
 
-// Send uses a set of options to create and send a request to the NEM blockchain.
-func Send(options Options) ([]byte, error) {
-	client := &http.Client{}
+// Sender is the interface to Requester objects
+type Sender interface {
+	Send(SenderOptions) ([]byte, error)
+}
+
+// Requester is used to send requests to NEM blockchain
+type Requester struct{}
+
+// Send will use the passed in builder and parser to process information
+// from the NEM blockchain
+func (Requester) Send(s SenderOptions) ([]byte, error) {
+	req, err := s.builder(s.options)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := s.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	return s.parser(resp)
+}
+
+// SenderOptions has everything needed for a Requester to send data to NEM
+type SenderOptions struct {
+	client  *http.Client
+	options Options
+	builder func(options Options) (*http.Request, error)
+	parser  func(resp *http.Response) ([]byte, error)
+}
+
+// NewDefaultSenderOptions will create a new SenderOptions object with
+// default values. This is used for ease of readibility and not needing to
+// instantiate the entier SenderOptions by hand every time.
+func NewDefaultSenderOptions(options Options) SenderOptions {
+	return SenderOptions{
+		client:  &http.Client{},
+		options: options,
+		builder: buildRequest,
+		parser:  parseResponse}
+}
+
+func buildRequest(options Options) (*http.Request, error) {
 	req, err := http.NewRequest(options.Method, options.URL.String(), bytes.NewBuffer(options.Body))
 	if err != nil {
 		return nil, err
@@ -47,10 +86,10 @@ func Send(options Options) ([]byte, error) {
 	for k, v := range options.Headers {
 		req.Header.Add(k, v)
 	}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
+	return req, nil
+}
+
+func parseResponse(resp *http.Response) ([]byte, error) {
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {

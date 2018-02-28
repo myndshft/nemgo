@@ -87,7 +87,7 @@ func (amdp *AccountMetaDataPair) unmarshal(data []byte) ([]AccountMetaDataPair, 
 }
 
 // GetBatchAccountData gets the AccountMetaDataPair of an array of accounts
-func GetBatchAccountData(u url.URL, addresses []string) ([]AccountMetaDataPair, error) {
+func GetBatchAccountData(sender Sender, u url.URL, addresses []string) ([]AccountMetaDataPair, error) {
 	u.Path = "/account/get/batch"
 	var build []map[string]string
 	for _, address := range addresses {
@@ -103,8 +103,8 @@ func GetBatchAccountData(u url.URL, addresses []string) ([]AccountMetaDataPair, 
 		Headers: JSON(payload),
 		Method:  http.MethodPost,
 		Body:    payload}
-	fmt.Println(URLEncoded)
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	fmt.Println(string(resp))
 	if err != nil {
 		return []AccountMetaDataPair{}, err
@@ -118,7 +118,7 @@ func GetBatchAccountData(u url.URL, addresses []string) ([]AccountMetaDataPair, 
 }
 
 // Forwarded gets the AccountMetaDataPair of the account for which the given account is the delegate account
-func Forwarded(u url.URL, address string) (AccountMetaDataPair, error) {
+func Forwarded(sender Sender, u url.URL, address string) (AccountMetaDataPair, error) {
 	u.Path = "/account/get/forwarded"
 	q := u.Query()
 	q.Set("address", address)
@@ -127,7 +127,8 @@ func Forwarded(u url.URL, address string) (AccountMetaDataPair, error) {
 		URL:     u,
 		Headers: URLEncoded,
 		Method:  http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return AccountMetaDataPair{}, err
 	}
@@ -141,7 +142,7 @@ func Forwarded(u url.URL, address string) (AccountMetaDataPair, error) {
 }
 
 // Data gets the AccountMetaDataPair of an account.
-func Data(u url.URL, address string) (AccountMetaDataPair, error) {
+func Data(sender Sender, u url.URL, address string) (AccountMetaDataPair, error) {
 	u.Path = "/account/get"
 	q := u.Query()
 	q.Set("address", address)
@@ -150,7 +151,8 @@ func Data(u url.URL, address string) (AccountMetaDataPair, error) {
 		URL:     u,
 		Headers: URLEncoded,
 		Method:  http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return AccountMetaDataPair{}, err
 	}
@@ -163,7 +165,7 @@ func Data(u url.URL, address string) (AccountMetaDataPair, error) {
 }
 
 // DataFromPublicKey gets the AccountMetaDataPair of an account with a public key
-func DataFromPublicKey(u url.URL, publicKey string) (AccountMetaDataPair, error) {
+func DataFromPublicKey(sender Sender, u url.URL, publicKey string) (AccountMetaDataPair, error) {
 	u.Path = "/account/get/from-public-key"
 	q := u.Query()
 	q.Set("publicKey", publicKey)
@@ -172,7 +174,8 @@ func DataFromPublicKey(u url.URL, publicKey string) (AccountMetaDataPair, error)
 		URL:     u,
 		Headers: URLEncoded,
 		Method:  http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return AccountMetaDataPair{}, err
 	}
@@ -213,7 +216,7 @@ func (hi *HarvestInfo) unmarshal(data []byte) ([]HarvestInfo, error) {
 }
 
 // HarvestedBlocks gets an array of harvest info objects for an account
-func HarvestedBlocks(u url.URL, address string) ([]HarvestInfo, error) {
+func HarvestedBlocks(sender Sender, u url.URL, address string) ([]HarvestInfo, error) {
 	u.Path = "/account/harvests"
 	q := u.Query()
 	q.Set("address", address)
@@ -222,7 +225,8 @@ func HarvestedBlocks(u url.URL, address string) ([]HarvestInfo, error) {
 		URL:     u,
 		Headers: URLEncoded,
 		Method:  http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return []HarvestInfo{}, err
 	}
@@ -373,7 +377,7 @@ func (tmdp *TransactionMetaDataPair) unmarshal(data []byte) ([]TransactionMetaDa
 }
 
 // AllTransactions gets all transactions of an account
-func AllTransactions(u url.URL, address string, txHash string, txID string) ([]TransactionMetaDataPair, error) {
+func AllTransactions(sender Sender, u url.URL, address string, txHash string, txID string) ([]TransactionMetaDataPair, error) {
 	u.Path = "/account/transfers/all"
 	q := u.Query()
 	q.Set("address", address)
@@ -388,7 +392,8 @@ func AllTransactions(u url.URL, address string, txHash string, txID string) ([]T
 		URL:     u,
 		Headers: URLEncoded,
 		Method:  http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return []TransactionMetaDataPair{}, err
 	}
@@ -402,7 +407,7 @@ func AllTransactions(u url.URL, address string, txHash string, txID string) ([]T
 
 // IncomingTransactions gets an array of TransactionMetaDataPair objects where
 // the sender has the address given as parameter to the request
-func IncomingTransactions(u url.URL, address string, txHash string, txID string) ([]TransactionMetaDataPair, error) {
+func IncomingTransactions(sender Sender, u url.URL, address string, txHash string, txID string) ([]TransactionMetaDataPair, error) {
 	u.Path = "/account/transfers/incoming"
 	q := u.Query()
 	q.Set("address", address)
@@ -417,7 +422,8 @@ func IncomingTransactions(u url.URL, address string, txHash string, txID string)
 		URL:     u,
 		Headers: URLEncoded,
 		Method:  http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return []TransactionMetaDataPair{}, err
 	}
@@ -431,7 +437,7 @@ func IncomingTransactions(u url.URL, address string, txHash string, txID string)
 
 // OutgoingTransactions gets an array of TransactionMetaDataPair objects where
 // the sender has the address given as parameter to the request.
-func OutgoingTransactions(u url.URL, address string, txHash string, txID string) ([]TransactionMetaDataPair, error) {
+func OutgoingTransactions(sender Sender, u url.URL, address string, txHash string, txID string) ([]TransactionMetaDataPair, error) {
 	u.Path = "/account/transfers/outgoing"
 	q := u.Query()
 	q.Set("address", address)
@@ -446,7 +452,8 @@ func OutgoingTransactions(u url.URL, address string, txHash string, txID string)
 		URL:     u,
 		Headers: URLEncoded,
 		Method:  http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return []TransactionMetaDataPair{}, err
 	}
@@ -512,7 +519,7 @@ func (utmdp *UnconfirmedTransactionMetaDataPair) unmarshal(data []byte) ([]Uncon
 
 // UnconfirmedTransactions gets the array of transactions for which an account
 // is the sender or receiver and which have not yet been included in a block
-func UnconfirmedTransactions(u url.URL, address string) ([]UnconfirmedTransactionMetaDataPair, error) {
+func UnconfirmedTransactions(sender Sender, u url.URL, address string) ([]UnconfirmedTransactionMetaDataPair, error) {
 	u.Path = "/account/unconfirmedTransactions"
 	q := u.Query()
 	q.Set("address", address)
@@ -521,7 +528,8 @@ func UnconfirmedTransactions(u url.URL, address string) ([]UnconfirmedTransactio
 		URL:     u,
 		Headers: URLEncoded,
 		Method:  http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return []UnconfirmedTransactionMetaDataPair{}, err
 	}
@@ -548,12 +556,13 @@ type UnlockInfoData struct {
 }
 
 // UnlockInfo gets information about the maximum number of allowed harvesters and how many harvesters are already using the node
-func UnlockInfo(u url.URL) (UnlockInfoData, error) {
+func UnlockInfo(sender Sender, u url.URL) (UnlockInfoData, error) {
 	u.Path = "/account/unlocked/info"
 	options := Options{
 		URL:    u,
 		Method: http.MethodPost}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return UnlockInfoData{}, err
 	}
@@ -603,7 +612,7 @@ func (nmdp *NamespaceMetaDataPair) unmarshal(data []byte) ([]NamespaceMetaDataPa
 }
 
 // NamespacesOwned gets namespaces that an account owns
-func NamespacesOwned(u url.URL, address string, parent string) ([]NamespaceMetaDataPair, error) {
+func NamespacesOwned(sender Sender, u url.URL, address string, parent string) ([]NamespaceMetaDataPair, error) {
 	u.Path = "/account/namespace/page"
 	q := u.Query()
 	q.Set("address", address)
@@ -613,7 +622,8 @@ func NamespacesOwned(u url.URL, address string, parent string) ([]NamespaceMetaD
 		URL:     u,
 		Headers: URLEncoded,
 		Method:  http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return []NamespaceMetaDataPair{}, err
 	}
@@ -655,7 +665,7 @@ func (m *Mosaic) unmarshal(data []byte) ([]Mosaic, error) {
 }
 
 // MosaicsOwned gets mosaics that an account owns
-func MosaicsOwned(u url.URL, address string) ([]Mosaic, error) {
+func MosaicsOwned(sender Sender, u url.URL, address string) ([]Mosaic, error) {
 	u.Path = "/account/mosaic/owned"
 	q := u.Query()
 	q.Set("address", address)
@@ -664,7 +674,8 @@ func MosaicsOwned(u url.URL, address string) ([]Mosaic, error) {
 		URL:     u,
 		Headers: URLEncoded,
 		Method:  http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return []Mosaic{}, err
 	}
@@ -755,7 +766,7 @@ func (md *MosaicDefinition) unmarshal(data []byte) ([]MosaicDefinition, error) {
 }
 
 // AccountMosaicDefinitions gets mosaic definitions that an account owns
-func AccountMosaicDefinitions(u url.URL, address string) ([]MosaicDefinition, error) {
+func AccountMosaicDefinitions(sender Sender, u url.URL, address string) ([]MosaicDefinition, error) {
 	u.Path = "/account/mosaic/owned/definition"
 	q := u.Query()
 	q.Set("address", address)
@@ -764,7 +775,8 @@ func AccountMosaicDefinitions(u url.URL, address string) ([]MosaicDefinition, er
 		URL:     u,
 		Headers: URLEncoded,
 		Method:  http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return []MosaicDefinition{}, err
 	}
@@ -778,7 +790,7 @@ func AccountMosaicDefinitions(u url.URL, address string) ([]MosaicDefinition, er
 }
 
 // MosaicDefinitionsCreated gets mosaic definitions that an account has created
-func MosaicDefinitionsCreated(u url.URL, address string, parent string) ([]MosaicDefinition, error) {
+func MosaicDefinitionsCreated(sender Sender, u url.URL, address string, parent string) ([]MosaicDefinition, error) {
 	u.Path = "account/mosaic/definition/page"
 	q := u.Query()
 	q.Set("address", address)
@@ -788,7 +800,8 @@ func MosaicDefinitionsCreated(u url.URL, address string, parent string) ([]Mosai
 		URL:     u,
 		Headers: URLEncoded,
 		Method:  http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return []MosaicDefinition{}, err
 	}
@@ -835,7 +848,7 @@ func (had *HistoricalAccountData) unmarshal(data []byte) ([]HistoricalAccountDat
 }
 
 // GetHistoricalAccountData gets the HistoricalAccountData of an account from a certain block
-func GetHistoricalAccountData(u url.URL, address string, block int) ([]HistoricalAccountData, error) {
+func GetHistoricalAccountData(sender Sender, u url.URL, address string, block int) ([]HistoricalAccountData, error) {
 	u.Path = "/account/historical/get"
 	q := u.Query()
 	q.Set("address", address)
@@ -847,7 +860,8 @@ func GetHistoricalAccountData(u url.URL, address string, block int) ([]Historica
 		URL:     u,
 		Headers: URLEncoded,
 		Method:  http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return []HistoricalAccountData{}, err
 	}
@@ -874,7 +888,7 @@ type batchHistoricalAccountDataRequestAccount struct {
 // TODO decide how to unmarshal this nested set of arrays into a struct
 
 // GetBatchHistoricalAccountData gets the AccountMetaDataPair of an array of accounts from an historical height.
-func GetBatchHistoricalAccountData(u url.URL, addresses []string, block int) {
+func GetBatchHistoricalAccountData(sender Sender, u url.URL, addresses []string, block int) {
 	buildPayload := batchHistoricalAccountDataRequest{Accounts: []batchHistoricalAccountDataRequestAccount{}, StartHeight: block, EndHeight: block, IncrementBy: 1}
 	for _, address := range addresses {
 		buildPayload.Accounts = append(buildPayload.Accounts, batchHistoricalAccountDataRequestAccount{address})
@@ -889,7 +903,8 @@ func GetBatchHistoricalAccountData(u url.URL, addresses []string, block int) {
 		Method:  http.MethodPost,
 		Headers: JSON(payload),
 		Body:    payload}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -897,7 +912,7 @@ func GetBatchHistoricalAccountData(u url.URL, addresses []string, block int) {
 }
 
 // StartHarvesting unlocks an account
-func StartHarvesting(u url.URL, privateKey string) error {
+func StartHarvesting(sender Sender, u url.URL, privateKey string) error {
 	u.Path = "/account/unlock"
 	payload, err := json.Marshal(map[string]string{"privateKey": privateKey})
 	if err != nil {
@@ -908,7 +923,8 @@ func StartHarvesting(u url.URL, privateKey string) error {
 		Headers: JSON(payload),
 		Method:  http.MethodPost,
 		Body:    payload}
-	_, err = Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	_, err = sender.Send(senderOpts)
 	if err != nil {
 		return err
 	}
@@ -916,7 +932,7 @@ func StartHarvesting(u url.URL, privateKey string) error {
 }
 
 // StopHarvesting locks an account
-func StopHarvesting(u url.URL, privateKey string) error {
+func StopHarvesting(sender Sender, u url.URL, privateKey string) error {
 	u.Path = "/account/lock"
 	payload, err := json.Marshal(map[string]string{"privateKey": privateKey})
 	if err != nil {
@@ -926,7 +942,8 @@ func StopHarvesting(u url.URL, privateKey string) error {
 		URL:    u,
 		Method: http.MethodPost,
 		Body:   payload}
-	_, err = Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	_, err = sender.Send(senderOpts)
 	if err != nil {
 		return err
 	}

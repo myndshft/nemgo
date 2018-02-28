@@ -60,12 +60,13 @@ type prevBlockHashData struct {
 }
 
 // LastBlock gets the current last block of the chain
-func LastBlock(u url.URL) (Block, error) {
+func LastBlock(sender Sender, u url.URL) (Block, error) {
 	u.Path = "/chain/last-block"
 	options := Options{
 		URL:    u,
 		Method: http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return Block{}, err
 	}
@@ -78,7 +79,7 @@ func LastBlock(u url.URL) (Block, error) {
 }
 
 // BlockByHeight gets a block by its height
-func BlockByHeight(u url.URL, height int) (Block, error) {
+func BlockByHeight(sender Sender, u url.URL, height int) (Block, error) {
 	u.Path = "/block/at/public"
 	// TODO finish this
 	payload, err := json.Marshal(map[string]string{"height": strconv.Itoa(height)})
@@ -89,7 +90,8 @@ func BlockByHeight(u url.URL, height int) (Block, error) {
 		URL:    u,
 		Method: http.MethodGet,
 		Body:   payload}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return Block{}, err
 	}
@@ -109,12 +111,13 @@ type BlockHeight struct {
 }
 
 // Height gets the current height of the block chain
-func Height(u url.URL) (BlockHeight, error) {
+func Height(sender Sender, u url.URL) (BlockHeight, error) {
 	u.Path = "/chain/height"
 	options := Options{
 		URL:    u,
 		Method: http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return BlockHeight{}, err
 	}
@@ -140,12 +143,13 @@ type CommunicationTimeStamps struct {
 }
 
 // Time gets network time (in ms)
-func Time(u url.URL) (CommunicationTimeStamps, error) {
+func Time(sender Sender, u url.URL) (CommunicationTimeStamps, error) {
 	u.Path = "/time-sync/network-time"
 	options := Options{
 		URL:    u,
 		Method: http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return CommunicationTimeStamps{}, err
 	}

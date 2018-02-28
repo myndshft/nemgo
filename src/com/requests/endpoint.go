@@ -90,12 +90,13 @@ type nemRequestResultData struct {
 }
 
 // Heartbeat determines if NIS is up and responsive
-func Heartbeat(u url.URL) (NemRequestResult, error) {
+func Heartbeat(sender Sender, u url.URL) (NemRequestResult, error) {
 	u.Path = "/heartbeat"
 	options := Options{
 		URL:    u,
 		Method: http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return NemRequestResult{}, err
 	}

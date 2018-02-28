@@ -85,11 +85,12 @@ func (sni *SuperNodeDefinition) unmarshal(data []byte) ([]SuperNodeDefinition, e
 }
 
 // All gets all nodes of the node reward program
-func All() (SuperNodeInfo, error) {
+func All(sender Sender) (SuperNodeInfo, error) {
 	options := Options{
 		URL:    model.Supernodes,
 		Method: http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return SuperNodeInfo{}, err
 	}
@@ -109,7 +110,7 @@ type Coordinates struct {
 }
 
 // Nearest gets the nearest supernodes up to total
-func Nearest(coords Coordinates, total int) ([]SuperNodeDefinition, error) {
+func Nearest(sender Sender, coords Coordinates, total int) ([]SuperNodeDefinition, error) {
 	payload, err := json.Marshal(map[string]interface{}{
 		"latitude":  coords.Latitude,
 		"longitude": coords.Longitude,
@@ -121,7 +122,8 @@ func Nearest(coords Coordinates, total int) ([]SuperNodeDefinition, error) {
 		URL:    model.NearestSupernodes,
 		Method: http.MethodPost,
 		Body:   payload}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return []SuperNodeDefinition{}, err
 	}
@@ -134,7 +136,7 @@ func Nearest(coords Coordinates, total int) ([]SuperNodeDefinition, error) {
 }
 
 // Get gets all the supernodes by status
-func Get(status int) ([]SuperNodeDefinition, error) {
+func Get(sender Sender, status int) ([]SuperNodeDefinition, error) {
 	payload, err := json.Marshal(map[string]int{"status": status})
 	if err != nil {
 		return []SuperNodeDefinition{}, err
@@ -143,7 +145,8 @@ func Get(status int) ([]SuperNodeDefinition, error) {
 		URL:    model.SupernodesByStatus,
 		Method: http.MethodPost,
 		Body:   payload}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return []SuperNodeDefinition{}, err
 	}

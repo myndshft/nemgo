@@ -24,7 +24,7 @@ import (
 // TODO test this and make sure it works
 
 // Audit will audit an apostille file
-func Audit(publicKey string, data string, signedData string) (bool, error) {
+func Audit(sender Sender, publicKey string, data string, signedData string) (bool, error) {
 	u := model.ApostilleAuditServer
 	q := u.Query()
 	q.Set("publicKey", publicKey)
@@ -34,7 +34,8 @@ func Audit(publicKey string, data string, signedData string) (bool, error) {
 	options := Options{
 		URL:    u,
 		Method: http.MethodPost}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return false, err
 	}

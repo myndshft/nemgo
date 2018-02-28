@@ -22,7 +22,7 @@ import (
 )
 
 // Roots gets root namespaces
-func Roots(u url.URL, ID int) (NamespaceMetaDataPair, error) {
+func Roots(sender Sender, u url.URL, ID int) (NamespaceMetaDataPair, error) {
 	u.Path = "/namespace/root/page"
 	q := u.Query()
 	q.Set("pageSize", "100")
@@ -33,7 +33,8 @@ func Roots(u url.URL, ID int) (NamespaceMetaDataPair, error) {
 	options := Options{
 		URL:    u,
 		Method: http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return NamespaceMetaDataPair{}, err
 	}
@@ -47,7 +48,7 @@ func Roots(u url.URL, ID int) (NamespaceMetaDataPair, error) {
 }
 
 // MosaicDefinitions gets mosaic definitions of a namespace
-func MosaicDefinitions(u url.URL, ID string) (MosaicDefinition, error) {
+func MosaicDefinitions(sender Sender, u url.URL, ID string) (MosaicDefinition, error) {
 	u.Path = "/namespace/mosaic/definition/page"
 	q := u.Query()
 	q.Set("namespace", ID)
@@ -55,7 +56,8 @@ func MosaicDefinitions(u url.URL, ID string) (MosaicDefinition, error) {
 	options := Options{
 		URL:    u,
 		Method: http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return MosaicDefinition{}, err
 	}
@@ -68,7 +70,7 @@ func MosaicDefinitions(u url.URL, ID string) (MosaicDefinition, error) {
 }
 
 // NamespaceInfo gets the namespace information for a given ID
-func NamespaceInfo(u url.URL, ID string) (NamespaceData, error) {
+func NamespaceInfo(sender Sender, u url.URL, ID string) (NamespaceData, error) {
 	u.Path = "/namespace"
 	q := u.Query()
 	q.Set("namespace", ID)
@@ -77,7 +79,8 @@ func NamespaceInfo(u url.URL, ID string) (NamespaceData, error) {
 		URL:     u,
 		Method:  http.MethodGet,
 		Headers: URLEncoded}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return NamespaceData{}, err
 	}

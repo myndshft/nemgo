@@ -29,7 +29,7 @@ type MarketInfo struct {
 // TODO determine the best way to handle this -- interface?
 
 // Xem gets market information from Poloniex API
-func Xem() (MarketInfo, error) {
+func Xem(sender Sender) (MarketInfo, error) {
 	u := model.MarketInfo
 	q := u.Query()
 	q.Set("command", "returnTicker")
@@ -37,7 +37,8 @@ func Xem() (MarketInfo, error) {
 	options := Options{
 		URL:    u,
 		Method: http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return MarketInfo{}, err
 	}
@@ -54,7 +55,7 @@ func Xem() (MarketInfo, error) {
 // TODO determine the best way to handle this -- interface?
 
 // BTC gets the BTC price from blockchain.info API
-func BTC() (MarketInfo, error) {
+func BTC(sender Sender) (MarketInfo, error) {
 	u := model.BTCPrice
 	q := u.Query()
 	q.Set("command", "returnTicker")
@@ -62,7 +63,8 @@ func BTC() (MarketInfo, error) {
 	options := Options{
 		URL:    u,
 		Method: http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return MarketInfo{}, err
 	}

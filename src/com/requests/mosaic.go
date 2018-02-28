@@ -29,7 +29,7 @@ type MosaicSupplyInfo struct {
 }
 
 // Supply gets teh current supply of a mosaic
-func Supply(u url.URL, ID string) (MosaicSupplyInfo, error) {
+func Supply(sender Sender, u url.URL, ID string) (MosaicSupplyInfo, error) {
 	u.Path = "/mosaic/supply"
 	q := u.Query()
 	q.Set("mosaicId", ID)
@@ -37,7 +37,8 @@ func Supply(u url.URL, ID string) (MosaicSupplyInfo, error) {
 	options := Options{
 		URL:    u,
 		Method: http.MethodGet}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return MosaicSupplyInfo{}, err
 	}

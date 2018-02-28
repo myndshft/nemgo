@@ -33,7 +33,7 @@ type RequestAnnounce struct {
 }
 
 // Announce will broadcast a transaction on the NEM network.
-func Announce(u url.URL, reqAnn RequestAnnounce) (NemRequestResult, error) {
+func Announce(sender Sender, u url.URL, reqAnn RequestAnnounce) (NemRequestResult, error) {
 	u.Path = "/transaction/announce"
 	payload, err := json.Marshal(reqAnn)
 	if err != nil {
@@ -44,7 +44,8 @@ func Announce(u url.URL, reqAnn RequestAnnounce) (NemRequestResult, error) {
 		Method:  http.MethodPost,
 		Headers: JSON(payload),
 		Body:    payload}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return NemRequestResult{}, err
 	}
@@ -59,7 +60,7 @@ func Announce(u url.URL, reqAnn RequestAnnounce) (NemRequestResult, error) {
 }
 
 // ByHash gets a TransactionMetaDataPair object from the chain using it's hash.
-func ByHash(u url.URL, txHash string) (TransactionMetaDataPair, error) {
+func ByHash(sender Sender, u url.URL, txHash string) (TransactionMetaDataPair, error) {
 	u.Path = "/transaction/get"
 	q := u.Query()
 	q.Set("hash", txHash)
@@ -68,7 +69,8 @@ func ByHash(u url.URL, txHash string) (TransactionMetaDataPair, error) {
 		URL:     u,
 		Method:  http.MethodGet,
 		Headers: URLEncoded}
-	resp, err := Send(options)
+	senderOpts := NewDefaultSenderOptions(options)
+	resp, err := sender.Send(senderOpts)
 	if err != nil {
 		return TransactionMetaDataPair{}, err
 	}
