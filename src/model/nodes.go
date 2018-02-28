@@ -3,10 +3,10 @@ package model
 import "net/url"
 
 // DefaultTestnet is the default testnet node
-const DefaultTestnet = "bigalice2.nem.ninja"
+var DefaultTestnet = url.URL{Scheme: "http", Host: "bigalice2.nem.ninja:7890"}
 
 // DefaultMainnet is the default mainnet node
-const DefaultMainnet = "alice6.nem.ninja"
+var DefaultMainnet = url.URL{Scheme: "http", Host: "alice6.nem.ninja"}
 
 // DefaultMijin is the default mijin node
 const DefaultMijin = ""

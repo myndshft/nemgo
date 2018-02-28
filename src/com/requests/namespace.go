@@ -66,3 +66,25 @@ func MosaicDefinitions(u url.URL, ID string) (MosaicDefinition, error) {
 	}
 	return data, nil
 }
+
+// NamespaceInfo gets the namespace information for a given ID
+func NamespaceInfo(u url.URL, ID string) (NamespaceData, error) {
+	u.Path = "/namespace"
+	q := u.Query()
+	q.Set("namespace", ID)
+	u.RawQuery = q.Encode()
+	options := Options{
+		URL:     u,
+		Method:  http.MethodGet,
+		Headers: URLEncoded}
+	resp, err := Send(options)
+	if err != nil {
+		return NamespaceData{}, err
+	}
+	var data NamespaceData
+	err = json.Unmarshal(resp, &data)
+	if err != nil {
+		return NamespaceData{}, err
+	}
+	return data, nil
+}

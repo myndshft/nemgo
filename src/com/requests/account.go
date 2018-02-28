@@ -140,8 +140,8 @@ func Forwarded(u url.URL, address string) (AccountMetaDataPair, error) {
 
 }
 
-// HarvestingBlocks gets the AccountMetaDataPair of an account.
-func HarvestingBlocks(u url.URL, address string) (AccountMetaDataPair, error) {
+// Data gets the AccountMetaDataPair of an account.
+func Data(u url.URL, address string) (AccountMetaDataPair, error) {
 	u.Path = "/account/get"
 	q := u.Query()
 	q.Set("address", address)
@@ -457,8 +457,6 @@ func OutgoingTransactions(u url.URL, address string, txHash string, txID string)
 	}
 	return data, nil
 }
-
-// TODO add in more complex transaction fields
 
 type multisigCosignitaryModification struct {
 	// ModificationType is the type of modification.
