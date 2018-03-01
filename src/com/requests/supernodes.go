@@ -16,7 +16,6 @@ package requests
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/myndshft/nem-go-sdk/src/model"
@@ -72,10 +71,11 @@ type SuperNodeDefinition struct {
 	NumUnlocked int `json:"numUnlocked,omitempty"`
 }
 
+type superNodeDefinitionRecords struct {
+	Records []SuperNodeDefinition `json:"data"`
+}
+
 func (sni *SuperNodeDefinition) unmarshal(data []byte) ([]SuperNodeDefinition, error) {
-	type superNodeDefinitionRecords struct {
-		Records []SuperNodeDefinition `json:"data"`
-	}
 	var tmpData superNodeDefinitionRecords
 	err := json.Unmarshal(data, &tmpData)
 	if err != nil {
@@ -94,7 +94,6 @@ func All(sender Sender) (SuperNodeInfo, error) {
 	if err != nil {
 		return SuperNodeInfo{}, err
 	}
-	fmt.Println(string(resp))
 	var data SuperNodeInfo
 	err = json.Unmarshal(resp, &data)
 	if err != nil {

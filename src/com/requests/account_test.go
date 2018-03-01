@@ -14,6 +14,9 @@ var testAddress = "TBCI2A67UQZAKCR6NS4JWAEICEIGEIM72G3MVW5S"
 var testPublicKey = "0257b05f601ff829fdff84956fb5e3c65470a62375a1cc285779edd5ca3b42f6"
 var testTxHash = "161d7f74ab9d332acd46f96650e74371d65b6e1a0f47b076bdd7ccea37903175"
 var testTxID = "100"
+var coords = Coordinates{
+	Latitude:  123.456,
+	Longitude: 234.567}
 
 // RequesterMock is a mock Requester used for testing only!
 type RequesterMock struct{}
@@ -53,9 +56,21 @@ func (RequesterMock) Send(s SenderOptions) ([]byte, error) {
 		return json.Marshal(mosaicDefinitionMock)
 	case "/namespace":
 		return json.Marshal(namespaceDataMock)
+	case "/transaction/announce":
+		return json.Marshal(nemRequestResultMock)
+	case "/transaction/get":
+		return json.Marshal(transactionMetaDataPairMock)
+	}
+
+	switch s.options.URL.Host {
+	case model.Supernodes.Host:
+		return json.Marshal(superNodeInfoMock)
+	case model.NearestSupernodes.Host:
+		return json.Marshal(superNodeDefinitionArrayMock)
 	default:
 		return []byte{}, nil
 	}
+
 }
 
 var accountMetaDataPairMock = AccountMetaDataPair{

@@ -16,7 +16,6 @@ package requests
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 )
@@ -49,7 +48,6 @@ func Announce(sender Sender, u url.URL, reqAnn RequestAnnounce) (NemRequestResul
 	if err != nil {
 		return NemRequestResult{}, err
 	}
-	fmt.Println(string(resp))
 	var data NemRequestResult
 	err = json.Unmarshal(resp, &data)
 	if err != nil {
@@ -74,7 +72,6 @@ func ByHash(sender Sender, u url.URL, txHash string) (TransactionMetaDataPair, e
 	if err != nil {
 		return TransactionMetaDataPair{}, err
 	}
-	fmt.Println(string(resp))
 	var tmdp TransactionMetaDataPair
 	err = json.Unmarshal(resp, &tmdp)
 	if err != nil {
