@@ -12,11 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
-Package model implements many constructs needed to effectively interfact with the
-NEM blockchain.
+package nemgo
 
-TODO add examples on use here
+import (
+	"reflect"
+	"testing"
+)
 
-*/
-package model
+func TestBlockHeight(t *testing.T) {
+	want := BlockHeight{
+		Height: 12345}
+	got, err := clientMock.Height()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(want, got) {
+		t.Fatalf("\nWanted: %v\n Got: %v", want, got)
+	}
+
+}

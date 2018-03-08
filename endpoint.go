@@ -12,18 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package requests
-
-import (
-	"strconv"
-)
-
-// URLEncoded is a url encoded header
-var URLEncoded = map[string]string{"Content-Type": "application/x-www-form-urlencoded"}
-
-// JSON creates an application/json header
-func JSON(data []byte) map[string]string {
-	header := map[string]string{"Content-Type": "application/json",
-		"Content-Length": strconv.Itoa(len(data))}
-	return header
-}
+package nemgo
