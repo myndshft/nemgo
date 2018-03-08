@@ -1,18 +1,66 @@
-# nem-go-sdk
+# nemgo
 
-A golang implementation of the NEM sdk.
+A pure golang SDK for the Nem blockchain. 
 
-## Getting started
+This project is in it's infancy and looking for more contributors! If you are working in Go, are interested in blockchain technologies, or just want to join a friendly open source project you are welcome!
 
-This project requires Go to be installed. On OS X with Homebrew you can just run `brew install go`.
+## Getting Started
 
-Running it then should be as simple as:
+`go get` the package using the following command:
 
-```console
-$ make
-$ ./bin/nem-go-sdk
+```bash
+$ go get github.com/myndshft/nemgo
 ```
 
-### Testing
+Open up your favorite text editor, create a new `Client` and interact with the blockchain!
 
-``make test``
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    
+    "github.com/myndshft/nemgo"
+)
+
+// testnet = byte(0x98)
+// mainnet = byte(0x68
+
+func main() {
+    client, err := nemgo.NewClient(byte(0x98))
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    // Get account information
+    address = "YOUR ACCOUNT ADDRESS"
+    actInfo, err := client.AccountInfo(address)
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Println(actInfo)
+    
+    // Get the current height of the chain
+    height, err := client.Height()
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Println(height)
+    
+    // Subscribe to transactions related to an account
+    // This will return a go channel
+    txs, err := client.SubscribeUnconfirmedTX(address)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer close(txs)
+    for tx := range txs {
+        fmt.Println(tx)
+    }
+```
+
+## Helping out
+
+Check out the `CONTRIBUTING.md` documents in the `docs` folder. We always welcome any contribution, large or small! 
+
