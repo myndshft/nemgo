@@ -8,7 +8,7 @@ You can contribute in many ways:
 
 ### Report Bugs
 
-Report bugs at https://github.com/myndshft/nem-go-sdk/issues.
+Report bugs at https://github.com/myndshft/nemgo/issues.
 
 If you are reporting a bug, please include:
 
@@ -34,7 +34,7 @@ articles, and such.
 
 ### Submit Feedback
 
-The best way to send feedback is to file an issue at https://github.com/myndshft/nem-go-sdk/issues.
+The best way to send feedback is to file an issue at https://github.com/myndshft/nemgo/issues.
 
 If you are proposing a feature:
 
@@ -45,12 +45,12 @@ If you are proposing a feature:
 
 ## Get Started!
 
-Ready to contribute? Here's how to set up `nem-go-sdk` for local development.
+Ready to contribute? Here's how to set up `nemgo` for local development.
 
-1. Fork the `nem-go-sdk` repo on GitHub.
+1. Fork the `nemgo` repo on GitHub.
 2. Clone your fork locally::
 
-    $ git clone git@github.com:your_name_here/nem-go-sdk.git
+    $ git clone git@github.com:your_name_here/nemgo.git
 
 3. Create a branch for local development::
 
@@ -60,7 +60,7 @@ Ready to contribute? Here's how to set up `nem-go-sdk` for local development.
 
 4. When you're done making changes, check that your changes pass the tests::
 
-    $ make test
+    $ go test ./...
 
 6. Commit your changes and push your branch to GitHub::
 
