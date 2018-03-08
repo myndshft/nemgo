@@ -1,3 +1,5 @@
+<img src=".github/nemgo.png" height="136">
+
 # nemgo
 
 A pure golang SDK for the Nem blockchain. 
@@ -64,3 +66,4 @@ func main() {
 
 Check out the `CONTRIBUTING.md` documents in the `docs` folder. We always welcome any contribution, large or small! 
 
+_The gopher logo is the work of Renee French. The Nem logo is licensed under CC0 1.0_
