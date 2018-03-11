@@ -2,6 +2,8 @@
 
 # nemgo
 
+[![Build Status](https://travis-ci.org/myndshft/nemgo.svg?branch=master)](https://travis-ci.org/myndshft/nemgo)
+
 A pure golang SDK for the Nem blockchain.
 
 This project is in it's infancy and looking for more contributors! If you are working in Go, are interested in blockchain technologies, or just want to join a friendly open source project you are welcome!
