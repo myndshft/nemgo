@@ -16,6 +16,7 @@ import (
 const eol = byte(10)
 
 // TODO create structs for each of the response types to use in Body
+
 // StreamMessage returns the Command, Headers, and Body of a stomp message
 type StreamMessage struct {
 	Command string
@@ -47,9 +48,9 @@ func buildSubscribe(destination string) (string, *big.Int, error) {
 }
 
 func (c *Client) changeURLPort() {
-	split := strings.Split(c.URL.Host, ":")
+	split := strings.Split(c.url.Host, ":")
 	host, port := split[0], "7778"
-	c.URL.Host = strings.Join([]string{host, port}, ":")
+	c.url.Host = strings.Join([]string{host, port}, ":")
 }
 
 func cleanCommand(line []byte) string {
@@ -114,15 +115,15 @@ func stompParser(msg []byte) (StreamMessage, error) {
 }
 
 func (c *Client) stompConnect() (*websocket.Conn, error) {
-	c.URL.Scheme = "ws"
-	c.URL.Path = "/w/messages/websocket"
+	c.url.Scheme = "ws"
+	c.url.Path = "/w/messages/websocket"
 	// websockets use port 7778 not 7890
 	c.changeURLPort()
-	conn, err := websocket.Dial(c.URL.String(), "", "http://localhost")
+	conn, err := websocket.Dial(c.url.String(), "", "http://localhost")
 	if err != nil {
 		return nil, err
 	}
-	host := strings.Split(c.URL.Host, ":")[0]
+	host := strings.Split(c.url.Host, ":")[0]
 	var b strings.Builder
 	b.WriteString("CONNECT\r\n")
 	b.WriteString("accept-version:1.2\n")

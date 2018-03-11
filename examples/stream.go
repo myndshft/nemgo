@@ -9,10 +9,7 @@ import (
 
 func main() {
 	// Connect to the testnet
-	client, err := nemgo.NewClient(byte(0x98))
-	if err != nil {
-		log.Fatal(err)
-	}
+	client := nemgo.New()
 	// Obtain blocks channel
 	blocks, err := client.SubscribeHeight()
 	if err != nil {

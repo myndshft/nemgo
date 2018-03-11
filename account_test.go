@@ -7,13 +7,12 @@ import (
 )
 
 var clientMock = Client{
-	Network: byte(0x98),
-	URL:     url.URL{Scheme: "http", Host: defaultTestnetHost},
-	Request: sendReqMock}
+	url:     url.URL{},
+	request: sendReqMock}
 
 func TestGetBatchAccountData(t *testing.T) {
-	want := []AccountMetaDataPair{
-		AccountMetaDataPair{
+	want := []AccountMetadataPair{
+		AccountMetadataPair{
 			Account: AccountInfo{
 				Address:         "TBCI2A67UQZAKCR6NS4JWAEICEIGEIM72G3MVW5S",
 				Balance:         124446551689680,
@@ -22,12 +21,12 @@ func TestGetBatchAccountData(t *testing.T) {
 				PublicKey:       "a11a1a6c17a24252e674d151713cdf51991ad101751e4af02a20c61b59f1fe1a",
 				Label:           "",
 				HarvestedBlocks: 645},
-			Meta: AccountMetaData{
+			Meta: AccountMetadata{
 				Status:        "LOCKED",
 				RemoteStatus:  "ACTIVE",
 				CosignatoryOf: []AccountInfo{},
 				Cosignatories: []AccountInfo{}}},
-		AccountMetaDataPair{
+		AccountMetadataPair{
 			Account: AccountInfo{
 				Address:         "TBCI2A67UQZAKCR6NS4JWAEICEIGEIM72G3MVW5S",
 				Balance:         124446551689680,
@@ -36,7 +35,7 @@ func TestGetBatchAccountData(t *testing.T) {
 				PublicKey:       "a11a1a6c17a24252e674d151713cdf51991ad101751e4af02a20c61b59f1fe1a",
 				Label:           "",
 				HarvestedBlocks: 645},
-			Meta: AccountMetaData{
+			Meta: AccountMetadata{
 				Status:        "LOCKED",
 				RemoteStatus:  "ACTIVE",
 				CosignatoryOf: []AccountInfo{},
@@ -51,7 +50,7 @@ func TestGetBatchAccountData(t *testing.T) {
 }
 
 func TestAccountInfo(t *testing.T) {
-	want := AccountMetaDataPair{
+	want := AccountMetadataPair{
 		Account: AccountInfo{
 			Address:         "TBCI2A67UQZAKCR6NS4JWAEICEIGEIM72G3MVW5S",
 			Balance:         124446551689680,
@@ -60,7 +59,7 @@ func TestAccountInfo(t *testing.T) {
 			PublicKey:       "a11a1a6c17a24252e674d151713cdf51991ad101751e4af02a20c61b59f1fe1a",
 			Label:           "",
 			HarvestedBlocks: 645},
-		Meta: AccountMetaData{
+		Meta: AccountMetadata{
 			Status:        "LOCKED",
 			RemoteStatus:  "ACTIVE",
 			CosignatoryOf: []AccountInfo{},
@@ -75,7 +74,7 @@ func TestAccountInfo(t *testing.T) {
 }
 
 func TestGetDelegated(t *testing.T) {
-	want := AccountMetaDataPair{
+	want := AccountMetadataPair{
 		Account: AccountInfo{
 			Address:         "TBCI2A67UQZAKCR6NS4JWAEICEIGEIM72G3MVW5S",
 			Balance:         124446551689680,
@@ -84,7 +83,7 @@ func TestGetDelegated(t *testing.T) {
 			PublicKey:       "a11a1a6c17a24252e674d151713cdf51991ad101751e4af02a20c61b59f1fe1a",
 			Label:           "",
 			HarvestedBlocks: 645},
-		Meta: AccountMetaData{
+		Meta: AccountMetadata{
 			Status:        "LOCKED",
 			RemoteStatus:  "ACTIVE",
 			CosignatoryOf: []AccountInfo{},
@@ -99,7 +98,7 @@ func TestGetDelegated(t *testing.T) {
 }
 
 func TestAccountStatus(t *testing.T) {
-	want := AccountMetaData{
+	want := AccountMetadata{
 		Status:        "LOCKED",
 		RemoteStatus:  "ACTIVE",
 		CosignatoryOf: []AccountInfo{},

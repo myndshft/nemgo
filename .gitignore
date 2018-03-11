@@ -13,3 +13,4 @@
 
 # Don't push the vendor directory
 vendor/
+.vscode/

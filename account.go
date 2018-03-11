@@ -22,24 +22,46 @@ import (
 
 // AccountInfo describes basic information for an account.
 type AccountInfo struct {
-	// Address contains the address of the account.
+	// Each account has a unique address. First letter of an address
+	// indicate the network the account belongs to. Currently two networks
+	// are defined: the test network whose account addresses start with a
+	// capital T and the main network whose account addresses always start
+	// with a capital N. Addresses have always a length of 40 characters
+	// and are base-32 encoded.
 	Address string
-	// Balance contains the balance of the account in micro NEM.
-	Balance float64
-	// vestedBalance contains the vested part of the balance of the account in micro NEM.
+	// Each account has a balance which is an integer greater or equal to
+	// zero and denotes the number of micro NEMs which the account owns.
+	// Thus a balance of 123456789 means the account owns 123.456789 NEM.
+	// A balance is split into its vested and unvested part.
+	// Only the vested part is relevant for the importance calculation.
+	// For transfers from one account to another only the balance itself
+	// is relevant.
+	Balance int
+	// vestedBalance contains the vested part of the balance of the account
+	// in micro NEM.
 	VestedBalance float64
-	// Importance contains the importance of the account.
+	// Each account is assigned an importance. The importance is a decimal
+	// number between 0 and 1. It denotes the probability of an account to
+	// harvest the next block in case the account has harvesting turned on
+	// and all other accounts are harvesting too. The exact formula for
+	// calculating the importance is not public yet.
+	// Accounts need at least 10k vested NEM to be included
+	// in the importance calculation.
 	Importance float64
-	// PublicKey contains the public key of the account.
+	// The public key of an account can be used to verify signatures of the
+	// account. Only accounts that have already published a transaction have
+	// a public key assigned to the account. Otherwise the field is null.
 	PublicKey string
-	// Label has the label of the account( not used, always null).
+	// Label has the label of the account (not used, always null).
 	Label string
-	// HarvestedBlocks contains the number of blocks that the account already harvested.
+	// Harvesting is the process of generating new blocks. The field
+	// denotes the number of blocks that the account harvested so far.
+	// For a new account the number is 0.
 	HarvestedBlocks int
 }
 
-// AccountMetaData describes additional information for the account.
-type AccountMetaData struct {
+// AccountMetadata describes additional information for the account.
+type AccountMetadata struct {
 	// Status contains the harvesting status of a queried account.
 	// The harvesting status can be one of the following values:
 	// "UNKNOWN": The harvesting status of the account is not known.
@@ -63,114 +85,96 @@ type AccountMetaData struct {
 	Cosignatories []AccountInfo
 }
 
-// AccountMetaDataPair includes durable information for an account and additional information about its state.
-type AccountMetaDataPair struct {
+// AccountMetadataPair includes durable information for an account and additional information about its state.
+type AccountMetadataPair struct {
 	// Account contains the account object.
 	Account AccountInfo `json:"account"`
 	// Meta contain the account meta data object.
-	Meta AccountMetaData `json:"meta"`
+	Meta AccountMetadata `json:"meta"`
 }
 
 // GetBatchAccountData gets the AccountMetaDataPair of an array of accounts
-func (c Client) GetBatchAccountData(addresses []string) ([]AccountMetaDataPair, error) {
-	var payloadBuilder []map[string]string
+func (c Client) GetBatchAccountData(addresses []string) ([]AccountMetadataPair, error) {
+	data := struct{ Data []AccountMetadataPair }{}
+	var pb []map[string]string
 	for _, address := range addresses {
-		payloadBuilder = append(payloadBuilder, map[string]string{"account": address})
+		pb = append(pb, map[string]string{"account": address})
 	}
-	payload, err := json.Marshal(map[string][]map[string]string{"data": payloadBuilder})
+	payload, err := json.Marshal(map[string][]map[string]string{"data": pb})
 	if err != nil {
-		return []AccountMetaDataPair{}, err
+		return data.Data, err
 	}
-	c.URL.Path = "/account/batch"
+	c.url.Path = "/account/batch"
 	req, err := c.buildReq(nil, payload, http.MethodPost)
 	if err != nil {
-		return []AccountMetaDataPair{}, err
+		return data.Data, err
 	}
-	body, err := c.Request(req)
+	body, err := c.request(req)
 	if err != nil {
-		return []AccountMetaDataPair{}, err
+		return data.Data, err
 	}
-	// The data is returned as a nested json array
-	// This enables us to not return the array nested
-	// as a value under a "data" key
-	data := struct{ Data []AccountMetaDataPair }{}
 	if err = json.Unmarshal(body, &data); err != nil {
-		return []AccountMetaDataPair{}, err
+		return data.Data, err
 	}
 	return data.Data, nil
 }
 
 // AccountInfo gets all information for a given address
-func (c Client) AccountInfo(address string) (AccountMetaDataPair, error) {
-	c.URL.Path = "/account/get"
+func (c Client) AccountInfo(address string) (AccountMetadataPair, error) {
+	var data AccountMetadataPair
+	c.url.Path = "/account/get"
 	req, err := c.buildReq(map[string]string{"address": address}, nil, http.MethodGet)
 	if err != nil {
-		return AccountMetaDataPair{}, err
+		return data, err
 	}
-	body, err := c.Request(req)
+	body, err := c.request(req)
 	if err != nil {
-		return AccountMetaDataPair{}, err
+		return data, err
 	}
-	var data AccountMetaDataPair
 	if err := json.Unmarshal(body, &data); err != nil {
 		fmt.Println(err)
-		return AccountMetaDataPair{}, err
+		return data, err
 	}
 	return data, nil
 }
 
 // GetDelegated returns the account meta and data info for the account
 // for which the given account is the delegate account
-func (c Client) GetDelegated(address string) (AccountMetaDataPair, error) {
-	c.URL.Path = "/account/get/forwarded"
+func (c Client) GetDelegated(address string) (AccountMetadataPair, error) {
+	var data AccountMetadataPair
+	c.url.Path = "/account/get/forwarded"
 	req, err := c.buildReq(map[string]string{"address": address}, nil, http.MethodGet)
 	if err != nil {
-		return AccountMetaDataPair{}, err
+		return data, err
 	}
-	body, err := c.Request(req)
+	body, err := c.request(req)
 	if err != nil {
-		return AccountMetaDataPair{}, err
+		return data, err
 	}
-	var data AccountMetaDataPair
 	if err := json.Unmarshal(body, &data); err != nil {
 		fmt.Println(err)
-		return AccountMetaDataPair{}, err
+		return data, err
 	}
 	return data, nil
 }
 
 // AccountStatus gets the current metadata about an account
-func (c Client) AccountStatus(address string) (AccountMetaData, error) {
-	c.URL.Path = "/account/status"
+func (c Client) AccountStatus(address string) (AccountMetadata, error) {
+	var data AccountMetadata
+	c.url.Path = "/account/status"
 	req, err := c.buildReq(map[string]string{"address": address}, nil, http.MethodGet)
 	if err != nil {
-		return AccountMetaData{}, err
+		return data, err
 	}
-	body, err := c.Request(req)
+	body, err := c.request(req)
 	if err != nil {
-		return AccountMetaData{}, err
+		return data, err
 	}
-	var data AccountMetaData
 	if err := json.Unmarshal(body, &data); err != nil {
 		fmt.Println(err)
-		return AccountMetaData{}, err
+		return data, err
 	}
 	return data, nil
-}
-
-func (c Client) IncomingTransactions(address string) {
-	// TODO
-	// /account/transfers/incoming
-}
-
-func (c Client) OutgoingTransactions(address string) {
-	// TODO
-	// /account/transfers/outgoing
-}
-
-func (c Client) AccountTransfers(address string) {
-	// TODO
-	// /account/transfers/all
 }
 
 // HarvestInfo is information about harvested blocks
@@ -184,18 +188,18 @@ type HarvestInfo struct {
 
 // Harvested gets an array of harvest info objects for an account
 func (c Client) Harvested(address string, hash string) ([]HarvestInfo, error) {
-	c.URL.Path = "/account/harvests"
+	var data = struct{ Data []HarvestInfo }{}
+	c.url.Path = "/account/harvests"
 	req, err := c.buildReq(map[string]string{"address": address, "hash": hash}, nil, http.MethodGet)
 	if err != nil {
-		return []HarvestInfo{}, err
+		return data.Data, err
 	}
-	body, err := c.Request(req)
+	body, err := c.request(req)
 	if err != nil {
-		return []HarvestInfo{}, err
+		return data.Data, err
 	}
-	var data = struct{ Data []HarvestInfo }{}
 	if err := json.Unmarshal(body, &data); err != nil {
-		return []HarvestInfo{}, err
+		return data.Data, err
 	}
 	return data.Data, nil
 }
@@ -212,18 +216,18 @@ type OwnedMosaic struct {
 // MosaicsOwned will find information about what mosaics an address
 // currently holds
 func (c Client) MosaicsOwned(address string) ([]OwnedMosaic, error) {
-	c.URL.Path = "/account/mosaic/owned"
+	var data = struct{ Data []OwnedMosaic }{}
+	c.url.Path = "/account/mosaic/owned"
 	req, err := c.buildReq(map[string]string{"address": address}, nil, http.MethodGet)
 	if err != nil {
-		return []OwnedMosaic{}, err
+		return data.Data, err
 	}
-	body, err := c.Request(req)
+	body, err := c.request(req)
 	if err != nil {
-		return []OwnedMosaic{}, err
+		return data.Data, err
 	}
-	var data = struct{ Data []OwnedMosaic }{}
 	if err := json.Unmarshal(body, &data); err != nil {
-		return []OwnedMosaic{}, err
+		return data.Data, err
 	}
 	return data.Data, nil
 }

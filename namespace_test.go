@@ -13,3 +13,59 @@
 // limitations under the License.
 
 package nemgo
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestRootNamespace(t *testing.T) {
+	want := []NamespaceMetadataPair{
+		NamespaceMetadataPair{
+			NamespaceMetaData: NamespaceMetadata{
+				ID: 26264},
+			NamespaceInfo: NamespaceInfo{
+				FQN:    "makoto.metal.coins",
+				Owner:  "TD3RXTHBLK6J3UD2BH2PXSOFLPWZOTR34WCG4HXH",
+				Height: 13465}},
+		NamespaceMetadataPair{
+			NamespaceMetaData: NamespaceMetadata{
+				ID: 25421},
+			NamespaceInfo: NamespaceInfo{
+				FQN:    "gimre.vouchers",
+				Owner:  "TDGIMREMR5NSRFUOMPI5OOHLDATCABNPC5ID2SVA",
+				Height: 12392}}}
+	got, err := clientMock.RootNamespace(1, 5)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if reflect.DeepEqual(want, got) {
+		t.Fatalf("\nWanted: %v\n   Got: %v", want, got)
+	}
+}
+
+func TestNamespace(t *testing.T) {
+	want := NamespaceInfo{
+		FQN:    "makoto.metal.coins",
+		Owner:  "TD3RXTHBLK6J3UD2BH2PXSOFLPWZOTR34WCG4HXH",
+		Height: 13465}
+	got, err := clientMock.Namespace("makoto.metal.coins")
+	if err != nil {
+		t.Fatal(err)
+	}
+	// BUG(tyler): reflect.DeepEqual shows these are different, but they aren't
+	if want != got {
+		t.Fatalf("\nWanted: %v\n   Got: %v", want, got)
+	}
+}
+
+// func TestMosaic(t *testing.T) {
+// 	want := MosaicInfo{}
+// 	got, err := clientMock.Mosaic()
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// 	if reflect.DeepEqual(want, got) {
+// 		t.Fatalf("\nWanted: %v\n   Got: %v", want, got)
+// 	}
+// }
