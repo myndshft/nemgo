@@ -151,11 +151,12 @@ func subscribe(conn *websocket.Conn, msg string, out chan StreamMessage, subID *
 		return nil, err
 	}
 	var e error
-	go func() error {
+	go func() {
 		var resp []byte
 		for {
 			if err := websocket.Message.Receive(conn, &resp); err == io.EOF {
 				e = errors.Wrap(err, "The server has no more things to say")
+				break
 			} else if err != nil {
 				e = errors.Wrap(err, "Error occurred while trying to receive message")
 			}
@@ -167,6 +168,7 @@ func subscribe(conn *websocket.Conn, msg string, out chan StreamMessage, subID *
 				out <- parsedResp
 			}
 		}
+		close(out)
 	}()
 	return out, e
 }
