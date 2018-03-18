@@ -121,11 +121,12 @@ func (c Client) GetBatchAccountData(addresses []string) ([]AccountMetadataPair, 
 	return data.Data, nil
 }
 
-type XXXXXXXX interface {
+type accountName interface {
 	isValid() bool
 	String() string
 }
 
+// Address is a Nem account address as a string
 type Address string
 
 func (a Address) isValid() bool {
@@ -137,6 +138,7 @@ func (a Address) String() string {
 	return string(a)
 }
 
+// PublicKey is a Nem account public key as a string
 type PublicKey string
 
 func (pk PublicKey) isValid() bool {
@@ -149,7 +151,7 @@ func (pk PublicKey) String() string {
 }
 
 // AccountData gets all information for a given address
-func (c Client) AccountData(acc XXXXXXXX) (AccountMetadataPair, error) {
+func (c Client) AccountData(acc accountName) (AccountMetadataPair, error) {
 	var data AccountMetadataPair
 	var req *http.Request
 	var err error
