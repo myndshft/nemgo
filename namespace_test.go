@@ -53,7 +53,7 @@ func TestNamespace(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	// BUG(tyler): reflect.DeepEqual shows these are different, but they aren't
+	// BUG(tyler): reflect.DeepEqual shows Namespaces are different in test incorrectly
 	if want != got {
 		t.Fatalf("\nWanted: %v\n   Got: %v", want, got)
 	}

@@ -1,3 +1,5 @@
+// +build OMIT
+
 package main
 
 import (
@@ -8,7 +10,7 @@ import (
 )
 
 func main() {
-	// Connect to the testnet
+	// Connect to the mainnet
 	client := nemgo.New()
 	// Obtain blocks channel
 	blocks, err := client.SubscribeHeight()

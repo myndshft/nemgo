@@ -12,4 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package nemgo
+package crypto
+
+// func AccountFromPubKey(pubkey string, network nemgo.Network) (string, error) {
+// 	h := sha3.Sum256([]byte(pubkey))
+// 	r := ripemd160.New()
+// 	_, err := r.Write(h[:])
+// 	if err != nil {
+// 		return "", err
+// 	}
+// 	b := append(network, r.Sum(nil)...)
+// 	h = sha3.Sum256(b)
+// 	a := append(b, h[:4])
+// 	return a
+
+// }

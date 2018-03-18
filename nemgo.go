@@ -1,16 +1,55 @@
+// Copyright 2018 Myndshft Technologies, Inc.
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package nemgo
 
 import (
 	"bytes"
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/pkg/errors"
 )
+
+type Network byte
+
+const (
+	_ Network = iota
+	Mainnet
+	Testnet
+)
+
+func (n *Network) UnmarshalJSON(data []byte) error {
+	var b byte
+	if err := json.Unmarshal(data, &b); err != nil {
+		return errors.Wrap(err, "Network should be a byte")
+	}
+	got, ok := map[byte]Network{byte(0x68): Mainnet, byte(0x98): Testnet}[b]
+	if !ok {
+		return fmt.Errorf("invalid network %v", b)
+	}
+	*n = got
+	return nil
+}
 
 // Client is used to interact with a NIS
 type Client struct {
-	network byte
+	network Network
 	url     url.URL
 	request func(*http.Request) ([]byte, error)
 }
@@ -28,7 +67,7 @@ type Option func(*Client)
 // which the host NIS is a member of
 // mainnet = byte(0x68)
 // testnet = byte(0x98)
-func WithNIS(host string, network byte) Option {
+func WithNIS(host string, network Network) Option {
 	return func(c *Client) {
 		c.url = url.URL{Scheme: "http", Host: host}
 		c.network = network
@@ -39,7 +78,7 @@ func WithNIS(host string, network byte) Option {
 // defaulting to the NEM mainnet
 func New(opts ...Option) *Client {
 	c := &Client{
-		network: byte(0x68),
+		network: Mainnet,
 		url:     url.URL{Scheme: "http", Host: "209.126.98.204:7890"},
 		request: sendReq}
 
