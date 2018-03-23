@@ -26,14 +26,18 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Network is the network type of Nem
 type Network byte
 
 const (
 	_ Network = iota
+	// Mainnet is the Nem main network
 	Mainnet
+	// Testnet is the Nem testing network
 	Testnet
 )
 
+// UnmarshalJSON will turn bytes into a Network type
 func (n *Network) UnmarshalJSON(data []byte) error {
 	var b byte
 	if err := json.Unmarshal(data, &b); err != nil {
