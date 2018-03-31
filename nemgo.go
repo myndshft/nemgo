@@ -8,6 +8,11 @@ import (
 	"time"
 )
 
+const (
+	Testnet = byte(0x98)
+	Mainnet = byte(0x68)
+)
+
 // Client is used to interact with a NIS
 type Client struct {
 	network byte
