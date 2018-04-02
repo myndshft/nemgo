@@ -160,7 +160,7 @@ func (c *Client) stompConnect() (*websocket.Conn, error) {
 	return conn, nil
 }
 
-func subscribe(conn *websocket.Conn, msg string, out chan StreamMessage, subID *big.Int) (chan StreamMessage, error) {
+func subscribe(conn *websocket.Conn, msg string, out chan StreamMessage, subID *big.Int, c *Client) (chan StreamMessage, error) {
 	if err := websocket.Message.Send(conn, msg); err != nil {
 		return nil, err
 	}
@@ -169,8 +169,14 @@ func subscribe(conn *websocket.Conn, msg string, out chan StreamMessage, subID *
 		var resp []byte
 		for {
 			if err := websocket.Message.Receive(conn, &resp); err == io.EOF {
-				e = errors.Wrap(err, "The server has no more things to say")
-				break
+				conn, err = c.stompConnect()
+				if err != nil {
+					return
+				}
+				if err = websocket.Message.Send(conn, msg); err != nil {
+					return
+				}
+				continue
 			} else if err != nil {
 				e = errors.Wrap(err, "Error occurred while trying to receive message")
 			}
@@ -182,7 +188,6 @@ func subscribe(conn *websocket.Conn, msg string, out chan StreamMessage, subID *
 				out <- parsedResp
 			}
 		}
-		close(out)
 	}()
 	return out, e
 }
@@ -197,7 +202,7 @@ func (c Client) SubscribeErrors() (chan StreamMessage, error) {
 	if err != nil {
 		return nil, err
 	}
-	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID)
+	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID, &c)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +219,7 @@ func (c Client) SubscribeHeight() (chan StreamMessage, error) {
 	if err != nil {
 		return nil, err
 	}
-	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID)
+	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID, &c)
 	if err != nil {
 		return nil, err
 	}
@@ -233,7 +238,7 @@ func (c Client) SubscribeUnconfirmedTX(address string) (chan StreamMessage, erro
 	if err != nil {
 		return nil, err
 	}
-	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID)
+	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID, &c)
 	if err != nil {
 		return nil, err
 	}
@@ -252,7 +257,7 @@ func (c Client) SubscribeConfirmedTX(address string) (chan StreamMessage, error)
 	if err != nil {
 		return nil, err
 	}
-	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID)
+	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID, &c)
 	if err != nil {
 		return nil, err
 	}
@@ -271,7 +276,7 @@ func (c Client) SubscribeRecentTX(address string) (chan StreamMessage, error) {
 	if err != nil {
 		return nil, err
 	}
-	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID)
+	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID, &c)
 	if err != nil {
 		return nil, err
 	}
@@ -290,7 +295,7 @@ func (c Client) SubscribeData(address string) (chan StreamMessage, error) {
 	if err != nil {
 		return nil, err
 	}
-	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID)
+	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID, &c)
 	if err != nil {
 		return nil, err
 	}
@@ -309,7 +314,7 @@ func (c Client) SubscribeMoasaicData(address string) (chan StreamMessage, error)
 	if err != nil {
 		return nil, err
 	}
-	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID)
+	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID, &c)
 	if err != nil {
 		return nil, err
 	}
@@ -328,7 +333,7 @@ func (c Client) SubscribeMosaics(address string) (chan StreamMessage, error) {
 	if err != nil {
 		return nil, err
 	}
-	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID)
+	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID, &c)
 	if err != nil {
 		return nil, err
 	}
@@ -347,7 +352,7 @@ func (c Client) SubscribeNamespaces(address string) (chan StreamMessage, error) 
 	if err != nil {
 		return nil, err
 	}
-	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID)
+	out, err := subscribe(conn, subMsg, make(chan StreamMessage), subID, &c)
 	if err != nil {
 		return nil, err
 	}

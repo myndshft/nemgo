@@ -16,40 +16,18 @@ package nemgo
 
 import (
 	"bytes"
-	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"time"
-
-	"github.com/pkg/errors"
 )
-
-// Network is the network type of Nem
-type Network byte
 
 const (
-	_ Network = iota
-	// Mainnet is the Nem main network
-	Mainnet
-	// Testnet is the Nem testing network
-	Testnet
+	// Testnet is a helper const to connect to the testnet
+	Testnet = byte(0x98)
+	// Mainnet is a helper const to connect to the mainnet
+	Mainnet = byte(0x68)
 )
-
-// UnmarshalJSON will turn bytes into a Network type
-func (n *Network) UnmarshalJSON(data []byte) error {
-	var b byte
-	if err := json.Unmarshal(data, &b); err != nil {
-		return errors.Wrap(err, "Network should be a byte")
-	}
-	got, ok := map[byte]Network{byte(0x68): Mainnet, byte(0x98): Testnet}[b]
-	if !ok {
-		return fmt.Errorf("invalid network %v", b)
-	}
-	*n = got
-	return nil
-}
 
 // Client is used to interact with a NIS
 type Client struct {
