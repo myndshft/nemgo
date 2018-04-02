@@ -37,19 +37,10 @@ const (
 	Testnet
 )
 
-// UnmarshalJSON will turn bytes into a Network type
-func (n *Network) UnmarshalJSON(data []byte) error {
-	var b byte
-	if err := json.Unmarshal(data, &b); err != nil {
-		return errors.Wrap(err, "Network should be a byte")
-	}
-	got, ok := map[byte]Network{byte(0x68): Mainnet, byte(0x98): Testnet}[b]
-	if !ok {
-		return fmt.Errorf("invalid network %v", b)
-	}
-	*n = got
-	return nil
-}
+const (
+	Testnet = byte(0x98)
+	Mainnet = byte(0x68)
+)
 
 // Client is used to interact with a NIS
 type Client struct {
