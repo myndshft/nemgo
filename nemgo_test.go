@@ -1,3 +1,17 @@
+// Copyright 2018 Myndshft Technologies, Inc.
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package nemgo
 
 import (
@@ -10,10 +24,10 @@ import (
 
 func TestNewWithOptions(t *testing.T) {
 	want := Client{
-		network: byte(0x98),
+		network: Testnet,
 		url:     url.URL{Scheme: "http", Host: "23.228.67.85:7890"},
 		request: sendReq}
-	got := New(WithNIS("23.228.67.85:7890", byte(0x98)))
+	got := New(WithNIS("23.228.67.85:7890", Testnet))
 	if reflect.DeepEqual(want, got) {
 		t.Fatalf("\nWanted: %v\n Got: %v", want, got)
 	}
@@ -21,6 +35,7 @@ func TestNewWithOptions(t *testing.T) {
 
 func TestNew(t *testing.T) {
 	want := Client{
+		network: Mainnet,
 		url:     url.URL{Scheme: "http", Host: "209.126.98.204:7890"},
 		request: sendReq}
 	got := New()
@@ -29,17 +44,22 @@ func TestNew(t *testing.T) {
 	}
 }
 
+// ExampleNew shows how to create a new NEM client
 func ExampleNew() {
 	c := New()
-	// use c here
+	// use c
+	// you can also create a client using a custom NIS
+	c = New(WithNIS("YOUR.CUSTOM.NIS.HERE:7890", Mainnet))
+	// use c
 	fmt.Println(c)
+
 }
 
 func sendReqMock(req *http.Request) ([]byte, error) {
 	switch req.URL.Path {
 	case "/account/batch":
 		return []byte(accountMetaDataPairNested), nil
-	case "/account/get", "/account/get/forwarded":
+	case "/account/get", "/account/get/forwarded", "/account/get/from-public-key":
 		return []byte(accountMetaDataPair), nil
 	case "/account/status":
 		return []byte(accountMetaData), nil

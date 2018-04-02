@@ -117,3 +117,24 @@ func (c Client) AllTransactions(address string) ([]TransactionMetadataPair, erro
 	}
 	return data.Data, nil
 }
+
+// TODO make this work on a transaction object
+// // WithMosaic is an Option used for CreateTransaction
+// func WithMosaic(mosaic string, amt int) Option {
+// 	return func(c *Client) {}
+// }
+
+// TODO put together the "sending transaction"
+// type SendTransaction struct {
+// 	Name   string
+// 	Amount string
+// }
+
+// CreateTransaction will initialize a transaction on the nem blockchain
+func (c Client) CreateTransaction(toAct string, xemAmt int, opts ...Option) (TransactionMetadataPair, error) {
+	var data TransactionMetadataPair
+	// for _, opt := range opts {
+
+	// }
+	return data, nil
+}

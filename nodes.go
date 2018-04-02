@@ -36,6 +36,7 @@ type identity struct {
 	PublicKey string
 }
 
+// Node is a node on the Nem blockchain
 type Node struct {
 	MetaData metadata
 	Endpoint endpoint

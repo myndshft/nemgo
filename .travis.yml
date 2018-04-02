@@ -17,6 +17,11 @@ install:
 script:
   - go test ./...
 
+# TODO: Is this the right slack channel?
+notifications:
+  slack: myndshfttech:eye5HmlClH9OThrY2xqdn3CN
+  email: false
+
 matrix:
   allow_failures:
     - go: tip

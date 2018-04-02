@@ -18,6 +18,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/pkg/errors"
 )
 
 // AccountInfo describes basic information for an account.
@@ -119,13 +121,57 @@ func (c Client) GetBatchAccountData(addresses []string) ([]AccountMetadataPair, 
 	return data.Data, nil
 }
 
-// AccountInfo gets all information for a given address
-func (c Client) AccountInfo(address string) (AccountMetadataPair, error) {
+type accountName interface {
+	isValid() bool
+	String() string
+}
+
+// Address is a Nem account address as a string
+type Address string
+
+func (a Address) isValid() bool {
+	// check if address is valid
+	return true
+}
+
+func (a Address) String() string {
+	return string(a)
+}
+
+// PublicKey is a Nem account public key as a string
+type PublicKey string
+
+func (pk PublicKey) isValid() bool {
+	// check if address is valid
+	return true
+}
+
+func (pk PublicKey) String() string {
+	return string(pk)
+}
+
+// AccountData gets all information for a given address
+func (c Client) AccountData(acc accountName) (AccountMetadataPair, error) {
 	var data AccountMetadataPair
-	c.url.Path = "/account/get"
-	req, err := c.buildReq(map[string]string{"address": address}, nil, http.MethodGet)
-	if err != nil {
-		return data, err
+	var req *http.Request
+	var err error
+	if acc.isValid() {
+		switch acc.(type) {
+		case Address:
+			c.url.Path = "/account/get"
+			req, err = c.buildReq(map[string]string{"address": acc.String()}, nil, http.MethodGet)
+			if err != nil {
+				return data, err
+			}
+		case PublicKey:
+			c.url.Path = "/account/get/from-public-key"
+			req, err = c.buildReq(map[string]string{"publicKey": acc.String()}, nil, http.MethodGet)
+			if err != nil {
+				return data, err
+			}
+		default:
+			return data, errors.New("Use an Address or PublicKey type")
+		}
 	}
 	body, err := c.request(req)
 	if err != nil {

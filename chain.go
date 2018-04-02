@@ -76,18 +76,15 @@ func (c Client) Score() (string, error) {
 // seconds since the nemesis have elapsed. This common time is called network
 // time.
 type Block struct {
-	// BUG(tyler): This should really be an int
+	// BUG(tyler): All float64 in Block should be int
 	TimeStamp     float64
 	Signature     string
 	PrevBlockHash string
-	// BUG(tyler): This should really be an int
-	Type         float64
-	Transactions []Transaction
-	// BUG(tyler): This should really be an int
-	Version float64
-	Signer  string
-	// BUG(tyler): This should really be an int
-	Height float64
+	Type          float64
+	Transactions  []Transaction
+	Version       float64
+	Signer        string
+	Height        float64
 }
 
 // UnmarshalJSON implements a custom JSON unmarshaller for Blocks
