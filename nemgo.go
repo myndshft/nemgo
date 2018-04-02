@@ -49,7 +49,7 @@ type Option func(*Client)
 // which the host NIS is a member of
 // mainnet = byte(0x68)
 // testnet = byte(0x98)
-func WithNIS(host string, network Network) Option {
+func WithNIS(host string, network byte) Option {
 	return func(c *Client) {
 		c.url = url.URL{Scheme: "http", Host: host}
 		c.network = network
