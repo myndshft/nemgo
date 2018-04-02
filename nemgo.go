@@ -31,7 +31,7 @@ const (
 
 // Client is used to interact with a NIS
 type Client struct {
-	network Network
+	network byte
 	url     url.URL
 	request func(*http.Request) ([]byte, error)
 }
