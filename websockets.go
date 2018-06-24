@@ -160,7 +160,7 @@ func (c *Client) stompConnect() (*websocket.Conn, error) {
 	return conn, nil
 }
 
-func subscribe(conn *websocket.Conn, msg string, out chan StreamMessage, subID *big.Int, c *Client) (chan StreamMessage, error) {
+func subscribe(conn *websocket.Conn, msg string, out chan StreamMessage, subID *big.Int, c *Client) (<-chan StreamMessage, error) {
 	if err := websocket.Message.Send(conn, msg); err != nil {
 		return nil, err
 	}
@@ -193,7 +193,7 @@ func subscribe(conn *websocket.Conn, msg string, out chan StreamMessage, subID *
 }
 
 // SubscribeErrors will return a channel subscribed to error messages
-func (c Client) SubscribeErrors() (chan StreamMessage, error) {
+func (c Client) SubscribeErrors() (<-chan StreamMessage, error) {
 	conn, err := c.stompConnect()
 	if err != nil {
 		return nil, err
@@ -210,7 +210,7 @@ func (c Client) SubscribeErrors() (chan StreamMessage, error) {
 }
 
 // SubscribeHeight will return a channel subscribed to block heights
-func (c Client) SubscribeHeight() (chan StreamMessage, error) {
+func (c Client) SubscribeHeight() (<-chan StreamMessage, error) {
 	conn, err := c.stompConnect()
 	if err != nil {
 		return nil, err
@@ -228,7 +228,7 @@ func (c Client) SubscribeHeight() (chan StreamMessage, error) {
 
 // SubscribeUnconfirmedTX will take an account address and subscribe to all
 // unconfirmed transactions at that address
-func (c Client) SubscribeUnconfirmedTX(address string) (chan StreamMessage, error) {
+func (c Client) SubscribeUnconfirmedTX(address string) (<-chan StreamMessage, error) {
 	conn, err := c.stompConnect()
 	if err != nil {
 		return nil, err
@@ -247,7 +247,7 @@ func (c Client) SubscribeUnconfirmedTX(address string) (chan StreamMessage, erro
 
 // SubscribeConfirmedTX will take an account address and subscribe to all
 // confirmed transactions at that address
-func (c Client) SubscribeConfirmedTX(address string) (chan StreamMessage, error) {
+func (c Client) SubscribeConfirmedTX(address string) (<-chan StreamMessage, error) {
 	conn, err := c.stompConnect()
 	if err != nil {
 		return nil, err
@@ -266,7 +266,7 @@ func (c Client) SubscribeConfirmedTX(address string) (chan StreamMessage, error)
 
 // SubscribeRecentTX will take an account address and subscribe to all
 // recent transactions at that address
-func (c Client) SubscribeRecentTX(address string) (chan StreamMessage, error) {
+func (c Client) SubscribeRecentTX(address string) (<-chan StreamMessage, error) {
 	conn, err := c.stompConnect()
 	if err != nil {
 		return nil, err
@@ -285,7 +285,7 @@ func (c Client) SubscribeRecentTX(address string) (chan StreamMessage, error) {
 
 // SubscribeData will take an account address and subscribe to all
 // account data changes at that address
-func (c Client) SubscribeData(address string) (chan StreamMessage, error) {
+func (c Client) SubscribeData(address string) (<-chan StreamMessage, error) {
 	conn, err := c.stompConnect()
 	if err != nil {
 		return nil, err
@@ -304,7 +304,7 @@ func (c Client) SubscribeData(address string) (chan StreamMessage, error) {
 
 // SubscribeMoasaicData will take an account address and subscribe to all
 // mosaic definition changes for that address
-func (c Client) SubscribeMoasaicData(address string) (chan StreamMessage, error) {
+func (c Client) SubscribeMoasaicData(address string) (<-chan StreamMessage, error) {
 	conn, err := c.stompConnect()
 	if err != nil {
 		return nil, err
@@ -323,7 +323,7 @@ func (c Client) SubscribeMoasaicData(address string) (chan StreamMessage, error)
 
 // SubscribeMosaics will take an account address and subscribe to all
 // mosaic changes for that address
-func (c Client) SubscribeMosaics(address string) (chan StreamMessage, error) {
+func (c Client) SubscribeMosaics(address string) (<-chan StreamMessage, error) {
 	conn, err := c.stompConnect()
 	if err != nil {
 		return nil, err
@@ -342,7 +342,7 @@ func (c Client) SubscribeMosaics(address string) (chan StreamMessage, error) {
 
 // SubscribeNamespaces will take an account address and subscribe to all
 // namespace changes for that address
-func (c Client) SubscribeNamespaces(address string) (chan StreamMessage, error) {
+func (c Client) SubscribeNamespaces(address string) (<-chan StreamMessage, error) {
 	conn, err := c.stompConnect()
 	if err != nil {
 		return nil, err
